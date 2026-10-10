@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detetive Digital — Página de Introdução</title>
+
+  <!-- Google Fonts: JetBrains Mono + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;600;700&display=swap">
+
+  <!-- Allowed Basecoat UI + Shell -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/basecoat.cdn.min.css">
+  <style>
+/* Skip artifact shell — fixed styles served beside every artifact.
+   Complements basecoat; artifacts override --accent for their own identity. */
+:root {
+  color-scheme: light dark;
+  --accent: #2563eb;
+  --accent-contrast: #ffffff;
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #000);
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --text: #14171f;
+  --text-muted: #5b6472;
+  --border: rgba(20, 23, 31, 0.10);
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(20, 23, 31, 0.08);
+  --space: 16px;
+}
+/* Theme resolution. Without data-theme the viewer's system preference decides,
+   as it always did. With it, the artifact's own choice wins in BOTH directions:
+   a page that hardcodes one palette must not be handed the opposite set of
+   tokens by the machine it happens to be opened on. The dark values appear
+   twice because a media query cannot be folded into a selector list.
+   The attribute sits inside :where() so these blocks keep the specificity of a
+   bare :root — the page's own <style> is linked after this file and must go on
+   overriding any token it wants, exactly as it could before. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --accent-text: color-mix(in srgb, var(--accent) 78%, #fff);
+    --bg: #101318;
+    --surface: #181c23;
+    --text: #eef1f6;
+    --text-muted: #9aa4b2;
+    --border: rgba(238, 241, 246, 0.12);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+}
+:root:where([data-theme="dark"]) {
+  color-scheme: dark;
+  --accent-text: color-mix(in srgb, var(--accent) 78%, #fff);
+  --bg: #101318;
+  --surface: #181c23;
+  --text: #eef1f6;
+  --text-muted: #9aa4b2;
+  --border: rgba(238, 241, 246, 0.12);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+:root:where([data-theme="light"]) { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+
+.shell-container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.shell-section { padding: calc(var(--space) * 2) 0; }
+.shell-grid { display: grid; gap: var(--space); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.shell-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: var(--space); }
+.shell-footer { padding: 24px 0 40px; color: var(--text-muted); font-size: 13px; }
+
+.shell-hero { padding: calc(var(--space) * 3) 0 calc(var(--space) * 2); }
+.shell-hero h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 10px; text-wrap: balance; }
+.shell-hero p { color: var(--text-muted); max-width: 60ch; margin: 0; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space);
+}
+
+.kpi { display: flex; flex-direction: column; gap: 4px; }
+.kpi .kpi-value { font-size: 28px; font-weight: 650; line-height: 1.1; }
+.kpi .kpi-label { font-size: 13px; color: var(--text-muted); }
+.kpi .kpi-delta { font-size: 12.5px; font-weight: 600; }
+.kpi .kpi-delta.up { color: #0a8f3c; }
+.kpi .kpi-delta.down { color: #cf3131; }
+
+table.shell-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.shell-table th {
+  text-align: left; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600;
+}
+table.shell-table th, table.shell-table td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border); }
+table.shell-table td.num, table.shell-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+
+.chart-box { width: 100%; min-height: 220px; }
+.chart-box svg { width: 100%; height: auto; display: block; }
+
+.muted { color: var(--text-muted); }
+.accent { color: var(--accent-text); }
+.shell-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shell-fade { animation: shell-fade 400ms ease both; }
+  @keyframes shell-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+
+</style>
+  
+
+  <style>
+    :root {
+      --accent: #00f3ff;
+      --accent-rgb: 0, 243, 255;
+      --neon-green: #00ff88;
+      --neon-green-rgb: 0, 255, 136;
+      --neon-amber: #f59e0b;
+      --bg-dark: #050b14;
+      --bg-panel: rgba(8, 18, 33, 0.85);
+      --border-cyan: rgba(0, 243, 255, 0.35);
+      --font-mono: 'JetBrains Mono', monospace, ui-monospace;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-dark);
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Cyber matrix background canvas */
+    #cyber-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    /* Subtle grid overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* 1. HUD Superior */
+    .hud-bar {
+      background: rgba(3, 8, 16, 0.9);
+      border-bottom: 1px solid rgba(0, 243, 255, 0.25);
+      padding: 0.6rem 1.25rem;
+      backdrop-filter: blur(10px);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .hud-title .tech-tag {
+      color: var(--accent);
+      background: rgba(0, 243, 255, 0.12);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      font-size: 0.7rem;
+    }
+
+    .hud-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--neon-green);
+      font-weight: 700;
+      white-space: nowrap;
+      background: rgba(0, 255, 136, 0.08);
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--neon-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-green);
+      animation: pulseGreen 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 12px var(--neon-green); }
+      50% { opacity: 0.4; transform: scale(0.85); box-shadow: 0 0 4px var(--neon-green); }
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 2.2rem 1.25rem 3.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* 2. Hero Section */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .mission-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: rgba(0, 243, 255, 0.08);
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 16px rgba(0, 243, 255, 0.2);
+      border-radius: 20px;
+      padding: 0.35rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin: 0 0 0.85rem;
+      color: #ffffff;
+      text-shadow: 
+        0 0 10px rgba(0, 243, 255, 0.7),
+        0 0 25px rgba(0, 243, 255, 0.4),
+        0 0 50px rgba(0, 243, 255, 0.2);
+    }
+
+    .hero-title .title-accent {
+      color: var(--accent);
+      text-shadow: 0 0 18px rgba(0, 243, 255, 0.9);
+    }
+
+    .typewriter-box {
+      min-height: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .typewriter-text {
+      font-family: var(--font-mono);
+      font-size: clamp(0.95rem, 2.8vw, 1.25rem);
+      color: var(--neon-green);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 1.2em;
+      vertical-align: middle;
+      background-color: var(--accent);
+      margin-left: 4px;
+      animation: blink 0.9s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .hero-lead {
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+      color: #94a3b8;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    /* 3. Bloco Identificação do Agente */
+    .agent-box {
+      background: linear-gradient(180deg, rgba(12, 28, 48, 0.85) 0%, rgba(6, 16, 30, 0.95) 100%);
+      border: 2px solid var(--accent);
+      box-shadow: 
+        0 0 24px rgba(0, 243, 255, 0.25),
+        inset 0 0 20px rgba(0, 243, 255, 0.06);
+      border-radius: 16px;
+      padding: 1.75rem 1.5rem;
+      margin: 0 auto 1.25rem;
+      max-width: 620px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agent-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), #ffffff, var(--accent), transparent);
+    }
+
+    .agent-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+    }
+
+    .agent-input-wrap {
+      position: relative;
+      margin-bottom: 0.75rem;
+    }
+
+    .agent-input {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(3, 9, 18, 0.85);
+      border: 1.5px solid rgba(0, 243, 255, 0.55);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      font-family: var(--font-mono);
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      box-shadow: 0 0 14px rgba(0, 243, 255, 0.15) inset, 0 4px 12px rgba(0, 0, 0, 0.4);
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .agent-input::placeholder {
+      color: #475569;
+      font-weight: 500;
+      font-size: 0.88rem;
+      letter-spacing: 0.05em;
+    }
+
+    .agent-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.5), inset 0 0 10px rgba(0, 243, 255, 0.2);
+      background: rgba(4, 14, 28, 0.95);
+    }
+
+    .agent-hint {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin: 0;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .agent-hint strong {
+      color: #cbd5e1;
+    }
+
+    /* 4. Botão Principal */
+    .cta-container {
+      max-width: 620px;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+
+    .btn-launch {
+      width: 100%;
+      background: linear-gradient(135deg, #00d2df 0%, #0099ff 50%, #00f3ff 100%);
+      color: #020813;
+      border: none;
+      border-radius: 12px;
+      padding: 1.15rem 1.75rem;
+      font-family: var(--font-mono);
+      font-size: clamp(1rem, 2.8vw, 1.25rem);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      box-shadow: 
+        0 0 28px rgba(0, 243, 255, 0.45),
+        0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      animation: pulseGlow 2.5s infinite alternate;
+      text-decoration: none;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.35), 0 6px 16px rgba(0, 0, 0, 0.5);
+        transform: translateY(0);
+      }
+      100% {
+        box-shadow: 0 0 35px rgba(0, 243, 255, 0.65), 0 10px 24px rgba(0, 0, 0, 0.6);
+        transform: translateY(-2px);
+      }
+    }
+
+    .btn-launch:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 0 45px rgba(0, 243, 255, 0.8), 0 12px 28px rgba(0, 0, 0, 0.7);
+      background: linear-gradient(135deg, #00f3ff 0%, #00bfff 50%, #00ffc4 100%);
+      color: #000;
+    }
+
+    .btn-launch:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .btn-launch .icon {
+      font-size: 1.35rem;
+      filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
+    }
+
+    .cta-subtext {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 0.85rem;
+      letter-spacing: 0.04em;
+    }
+
+    .cta-subtext span {
+      color: var(--neon-green);
+      font-weight: 600;
+    }
+
+    /* Section Titles */
+    .section-header {
+      text-align: center;
+      margin-bottom: 1.6rem;
+    }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: clamp(1.2rem, 3.2vw, 1.55rem);
+      font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      position: relative;
+      padding-bottom: 0.4rem;
+    }
+
+    .section-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    /* 5. Como funciona a missão (4 Cards) */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.15rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .mission-card {
+      background: rgba(8, 20, 36, 0.75);
+      border: 1px solid rgba(0, 243, 255, 0.25);
+      border-radius: 12px;
+      padding: 1.35rem 1.15rem;
+      transition: all 0.25s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(8px);
+    }
+
+    .mission-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15);
+      background: rgba(11, 26, 46, 0.9);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.85rem;
+      display: inline-block;
+      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.4));
+    }
+
+    .card-title {
+      font-family: var(--font-mono);
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 0 0 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* 6. As 6 Fases da Trilha */
+    .phases-wrap {
+      margin-bottom: 3.5rem;
+    }
+
+    .phases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .phase-card {
+      background: rgba(6, 16, 28, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 10px;
+      padding: 1rem 0.85rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phase-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(0, 243, 255, 0.3);
+    }
+
+    .phase-card:hover {
+      border-color: var(--neon-green);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 255, 136, 0.15);
+    }
+
+    .phase-card:hover::before {
+      background: var(--neon-green);
+    }
+
+    .phase-number {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    .phase-name {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 0.65rem;
+      line-height: 1.35;
+    }
+
+    .phase-lock {
+      font-size: 0.95rem;
+      opacity: 0.75;
+      color: #94a3b8;
+    }
+
+    /* 7. Alerta do Detetive */
+    .alert-hq {
+      background: rgba(30, 20, 5, 0.8);
+      border: 1.5px solid var(--neon-amber);
+      box-shadow: 
+        0 0 20px rgba(245, 158, 11, 0.2),
+        inset 0 0 15px rgba(245, 158, 11, 0.05);
+      border-radius: 12px;
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      animation: alertPulse 3s infinite ease-in-out;
+      backdrop-filter: blur(8px);
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 0 14px rgba(245, 158, 11, 0.15); }
+      50% { border-color: rgba(245, 158, 11, 0.9); box-shadow: 0 0 25px rgba(245, 158, 11, 0.35); }
+    }
+
+    .alert-hq-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .alert-hq-text {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: #fef3c7;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .alert-hq-text strong {
+      color: #fbbf24;
+      font-weight: 800;
+    }
+
+    /* 8. Rodapé */
+    .footer-section {
+      border-top: 1px solid rgba(0, 243, 255, 0.15);
+      background: rgba(3, 8, 16, 0.92);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer-system-text {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #64748b;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+
+    .tech-pill:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(0, 243, 255, 0.08);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem 1rem 2.5rem;
+      }
+      .agent-box {
+        padding: 1.35rem 1rem;
+      }
+      .hud-title span.extra-hud {
+        display: none;
+      }
+      .phases-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background animation canvas -->
+  <canvas id="cyber-bg" aria-hidden="true"></canvas>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrap">
+    <!-- 1. CABEÇALHO / HUD -->
+    <header class="hud-bar" role="banner">
+      <div class="hud-title">
+        <span class="tech-tag">HQ SEC-SYS</span>
+        <span>SISTEMA EDUCATIVO DE SEGURANÇA DIGITAL ATIVO</span>
+        <span class="extra-hud" style="color: #475569;">• V2.0</span>
+      </div>
+      <div class="hud-status" aria-label="Status do sistema: Online">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>ONLINE</span>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container" role="main">
+      <!-- 2. HERO -->
+      <section class="hero-section">
+        <div>
+          <span class="mission-badge">
+            <span aria-hidden="true">⚡</span> MISSÃO SECRETA • NÍVEL INICIANTE
+          </span>
+        </div>
+
+        <h1 class="hero-title">
+          DETETIVE DIGITAL <span class="title-accent">CYBER 2.0</span>
+        </h1>
+
+        <!-- Typewriter Subtitle -->
+        <div class="typewriter-box" aria-live="polite">
+          <span class="typewriter-text" id="typewriter"></span>
+          <span class="cursor" aria-hidden="true"></span>
+        </div>
+
+        <p class="hero-lead">
+          Você foi convocado para a força-tarefa digital. Sua missão: aprender a identificar e desarmar as ameaças mais comuns da internet e conquistar seu certificado oficial de Detetive Digital.
+        </p>
+      </section>
+
+      <!-- 3. CAMPO DE IDENTIFICAÇÃO DO AGENTE (DESTAQUE PRINCIPAL) -->
+      <section class="agent-box" aria-labelledby="agent-label-id">
+        <label id="agent-label-id" for="agent-input" class="agent-label">
+          <span aria-hidden="true">🪪</span> IDENTIFICAÇÃO DO AGENTE
+        </label>
+        
+        <div class="agent-input-wrap">
+          <input 
+            type="text" 
+            id="agent-input" 
+            class="agent-input" 
+            placeholder="DIGITE SEU NOME DE AGENTE DETETIVE"
+            autocomplete="name"
+            maxlength="40"
+            spellcheck="false"
+          >
+        </div>
+
+        <p class="agent-hint">
+          ✍️ Seu nome será gravado no <strong>CERTIFICADO DE DETETIVE DIGITAL</strong> emitido ao concluir a trilha.
+        </p>
+      </section>
+
+      <!-- 4. BOTÃO PRINCIPAL DE ENTRADA -->
+      <div class="cta-container">
+        <button type="button" id="btn-start" class="btn-launch" aria-label="Iniciar missão e entrar no jogo">
+          <span class="icon" aria-hidden="true">🔍</span>
+          <span>INICIAR MISSÃO — ENTRAR NO JOGO</span>
+        </button>
+        <div class="cta-subtext">
+          <span>6 fases</span> • <span>3 vidas</span> • medalhas, certificado e bônus no final
+        </div>
+      </div>
+
+      <!-- 5. COMO FUNCIONA A MISSÃO -->
+      <section aria-labelledby="how-it-works-title" style="margin-bottom: 3.5rem;">
+        <div class="section-header">
+          <h2 id="how-it-works-title" class="section-title">
+            <span aria-hidden="true">🎯</span> COMO FUNCIONA A MISSÃO
+          </h2>
+        </div>
+
+        <div class="mission-grid">
+          <!-- Card 1 -->
+          <article class="mission-card">
+            <div class="card-icon" aria-hidden="true">📚</div>
+            <h3 class="card-title">Aula em Cada Fase</h3>
+            <p class="card-desc">Antes de cada desafio, uma aula explicativa com narração em áudio te prepara para a missão.</p>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="mission-card">
+            <div class="card-icon" aria-hidden="true">🧠</div>
+            <h3 class="card-title">Quiz Detetive</h3>
+            <p class="card-desc">Responda para identificar golpes de Phishing, Engenharia Social e Pix. Errou? Perde uma vida!</p>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="mission-card">
+            <div class="card-icon" aria-hidden="true">🏅</div>
+            <h3 class="card-title">Medalhas e Patentes</h3>
+            <p class="card-desc">Conquiste 6 medalhas ao longo da trilha e suba de patente: de Recruta a Mestre Cyber.</p>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="mission-card">
+            <div class="card-icon" aria-hidden="true">🏆</div>
+            <h3 class="card-title">Recompensa Final</h3>
+            <p class="card-desc">Complete a trilha e desbloqueie a HQ exclusiva "Detetive Digital", com capa, QR Code e download.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 6. AS 6 FASES DA TRILHA -->
+      <section class="phases-wrap" aria-labelledby="phases-title">
+        <div class="section-header">
+          <h2 id="phases-title" class="section-title">
+            <span aria-hidden="true">🛡️</span> AS 6 FASES DA TRILHA
+          </h2>
+        </div>
+
+        <div class="phases-grid">
+          <div class="phase-card">
+            <span class="phase-number">FASE 01</span>
+            <span class="phase-name">Phishing</span>
+            <span class="phase-lock" aria-label="Fase bloqueada">🔒</span>
+          </div>
+
+          <div class="phase-card">
+            <span class="phase-number">FASE 02</span>
+            <span class="phase-name">Engenharia Social</span>
+            <span class="phase-lock" aria-label="Fase bloqueada">🔒</span>
+          </div>
+
+          <div class="phase-card">
+            <span class="phase-number">FASE 03</span>
+            <span class="phase-name">Golpes no Pix</span>
+            <span class="phase-lock" aria-label="Fase bloqueada">🔒</span>
+          </div>
+
+          <div class="phase-card">
+            <span class="phase-number">FASE 04</span>
+            <span class="phase-name">Senhas Fortes & 2FA</span>
+            <span class="phase-lock" aria-label="Fase bloqueada">🔒</span>
+          </div>
+
+          <div class="phase-card">
+            <span class="phase-number">FASE 05</span>
+            <span class="phase-name">Redes & Privacidade</span>
+            <span class="phase-lock" aria-label="Fase bloqueada">🔒</span>
+          </div>
+
+          <div class="phase-card">
+            <span class="phase-number">FASE 06</span>
+            <span class="phase-name">Missão Final</span>
+            <span class="phase-lock" aria-label="Fase bloqueada">🔒</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. ALERTA DO DETETIVE -->
+      <aside class="alert-hq" role="alert">
+        <span class="alert-hq-icon" aria-hidden="true">⚠️</span>
+        <p class="alert-hq-text">
+          <strong>AVISO DO QUARTEL-GENERAL:</strong> golpistas atacam todos os dias por e-mail, WhatsApp e redes sociais. Quem treina aqui erra menos lá fora. Boa sorte, Agente!
+        </p>
+      </aside>
+    </main>
+
+    <!-- 8. RODAPÉ -->
+    <footer class="footer-section" role="contentinfo">
+      <div class="footer-system-text">
+        SISTEMA EDUCATIVO DE SEGURANÇA DIGITAL ATIVO • REDES & INTERNET SECURITY
+      </div>
+      <div class="tags-list" aria-label="Tópicos de segurança abordados">
+        <span class="tech-pill">#Phishing</span>
+        <span class="tech-pill">#Eng. Social</span>
+        <span class="tech-pill">#Proteção Pix</span>
+        <span class="tech-pill">#2FA</span>
+        <span class="tech-pill">#Privacidade</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. BASE URL DO JOGO
+      const GAME_BASE_URL = 'https://skip-artifacts-snapshots.application.production.adapta.tools/user_3JI78yWYLhZJS6FdtJa86zbsrIH/z2ssnw3jaryrbb3yuu5lxgncvq/revisions/b9264cb1-9694-42f0-b1bd-cabdc74db314/index.html';
+
+      // 2. INPUT DE NOME - LETRAS MAIÚSCULAS EM TEMPO REAL
+      const agentInput = document.getElementById('agent-input');
+      const btnStart = document.getElementById('btn-start');
+
+      // Recupera último nome usado caso exista no localStorage
+      try {
+        const savedName = localStorage.getItem('detetive_digital_agent_name');
+        if (savedName) {
+          agentInput.value = savedName.toUpperCase();
+        }
+      } catch (e) {
+        // storage disabled or restricted
+      }
+
+      agentInput.addEventListener('input', (e) => {
+        const upper = e.target.value.toUpperCase();
+        if (e.target.value !== upper) {
+          e.target.value = upper;
+        }
+      });
+
+      // Ação ao teclar Enter no input
+      agentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          btnStart.click();
+        }
+      });
+
+      // 3. CLIQUE NO BOTÃO PRINCIPAL DE ENTRADA
+      btnStart.addEventListener('click', () => {
+        const rawName = agentInput.value.trim();
+        let targetUrl = GAME_BASE_URL;
+
+        if (rawName.length > 0) {
+          const upperName = rawName.toUpperCase();
+          try {
+            localStorage.setItem('detetive_digital_agent_name', upperName);
+          } catch (e) {}
+
+          const encoded = encodeURIComponent(upperName);
+          targetUrl = `${GAME_BASE_URL}?agente=${encoded}`;
+        }
+
+        // Navega na mesma janela/guia atual
+        window.location.href = targetUrl;
+      });
+
+      // 4. EFEITO MÁQUINA DE ESCREVER (TYPEWRITER)
+      const phrases = [
+        "Treinamento Interativo de Cibersegurança",
+        "Desarme golpes antes que eles te alcancem",
+        "Phishing • Engenharia Social • Golpes no Pix"
+      ];
+
+      const typewriterEl = document.getElementById('typewriter');
+      let phraseIndex = 0;
+      let charIndex = 0;
+      let isDeleting = false;
+      const typeSpeed = 50;
+      const deleteSpeed = 25;
+      const delayBetween = 2200;
+
+      function typeLoop() {
+        const currentPhrase = phrases[phraseIndex];
+
+        if (isDeleting) {
+          typewriterEl.textContent = currentPhrase.substring(0, charIndex - 1);
+          charIndex--;
+        } else {
+          typewriterEl.textContent = currentPhrase.substring(0, charIndex + 1);
+          charIndex++;
+        }
+
+        if (!isDeleting && charIndex === currentPhrase.length) {
+          // Pausa antes de apagar
+          setTimeout(() => {
+            isDeleting = true;
+            typeLoop();
+          }, delayBetween);
+          return;
+        } else if (isDeleting && charIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+          setTimeout(typeLoop, 400);
+          return;
+        }
+
+        const nextSpeed = isDeleting ? deleteSpeed : typeSpeed;
+        setTimeout(typeLoop, nextSpeed);
+      }
+
+      typeLoop();
+
+      // 5. ANIMAÇÃO DE FUNDO CANVAS (PARTÍCULAS DIGITAIS LEVES)
+      const canvas = document.getElementById('cyber-bg');
+      if (canvas && canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        });
+
+        // Nós flutuantes cibernéticos
+        const nodeCount = Math.min(45, Math.floor(width / 30));
+        const nodes = [];
+
+        for (let i = 0; i < nodeCount; i++) {
+          nodes.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.45,
+            vy: (Math.random() - 0.5) * 0.45,
+            radius: Math.random() * 1.8 + 0.8,
+            color: Math.random() > 0.4 ? 'rgba(0, 243, 255,' : 'rgba(0, 255, 136,'
+          });
+        }
+
+        let animationFrame;
+        function renderCanvas() {
+          ctx.clearRect(0, 0, width, height);
+
+          // Atualizar e desenhar nós
+          for (let i = 0; i < nodes.length; i++) {
+            const p = nodes[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0) p.x = width;
+            else if (p.x > width) p.x = 0;
+            if (p.y < 0) p.y = height;
+            else if (p.y > height) p.y = 0;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `${p.color} 0.65)`;
+            ctx.fill();
+
+            // Linhas entre nós próximos
+            for (let j = i + 1; j < nodes.length; j++) {
+              const p2 = nodes[j];
+              const dx = p.x - p2.x;
+              const dy = p.y - p2.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+
+              if (dist < 110) {
+                const alpha = (1 - dist / 110) * 0.18;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = `rgba(0, 243, 255, ${alpha})`;
+                ctx.lineWidth = 0.7;
+                ctx.stroke();
+              }
+            }
+          }
+
+          animationFrame = requestAnimationFrame(renderCanvas);
+        }
+
+        renderCanvas();
+
+        // Parar animação caso a aba fique oculta para economizar GPU
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            cancelAnimationFrame(animationFrame);
+          } else {
+            renderCanvas();
+          }
+        });
+      }
+    });
+  </script>
+<script>
+/* Skip artifact shell — fixed helpers served beside every artifact. */
+(function () {
+  "use strict";
+
+  var fmt = {
+    num: function (v, opts) { return new Intl.NumberFormat("pt-BR", opts || {}).format(v); },
+    brl: function (v) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v); },
+    pct: function (v) { return new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 }).format(v); }
+  };
+
+  // axisFmt keeps axis tick labels short (compact notation) so long values
+  // (e.g. full BRL amounts) never clip against the plot edge.
+  function axisFmt(v) {
+    return fmt.num(v, { notation: "compact", maximumFractionDigits: 1 });
+  }
+
+  // format accepts a function OR one of the fmt names ("num" | "brl" | "pct").
+  function coerceFormat(spec) {
+    if (typeof spec === "function") return spec;
+    if (typeof spec === "string" && fmt[spec]) return fmt[spec];
+    return function (v) { return fmt.num(v); };
+  }
+
+  function accent() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#2563eb";
+  }
+  function mutedColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--text-muted").trim() || "#5b6472";
+  }
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function frame(el, w, h) {
+    var svg = svgEl("svg", { viewBox: "0 0 " + w + " " + h, role: "img" });
+    el.innerHTML = "";
+    el.appendChild(svg);
+    return svg;
+  }
+
+  // maxOf guards the axis scale: empty values would give -Infinity (truthy,
+  // so "|| 1" can't catch it) and a non-positive max would flip the chart.
+  function maxOf(values) {
+    var m = values.length ? Math.max.apply(null, values) : 0;
+    return m > 0 ? m : 1;
+  }
+
+  // bar(el, {labels:[], values:[], color?, format?}) — vertical bar chart.
+  function bar(el, cfg) {
+    var W = 640, H = 280, padL = 46, padB = 30, padT = 12;
+    var svg = frame(el, W, H);
+    var max = maxOf(cfg.values);
+    var n = cfg.values.length;
+    var plotW = W - padL - 12, plotH = H - padT - padB;
+    var step = plotW / n, bw = Math.min(step * 0.62, 64);
+    var color = cfg.color || accent();
+    var f = coerceFormat(cfg.format);
+    for (var g = 0; g <= 4; g++) {
+      var gy = padT + plotH - (plotH * g) / 4;
+      svg.appendChild(svgEl("line", { x1: padL, y1: gy, x2: W - 12, y2: gy, stroke: "currentColor", "stroke-opacity": 0.08 }));
+      var lbl = svgEl("text", { x: padL - 8, y: gy + 4, "text-anchor": "end", "font-size": 10, fill: mutedColor() });
+      lbl.textContent = axisFmt((max * g) / 4);
+      svg.appendChild(lbl);
+    }
+    cfg.values.forEach(function (v, i) {
+      var bh = Math.max(0, (v / max) * plotH);
+      var x = padL + i * step + (step - bw) / 2;
+      var y = padT + plotH - bh;
+      var r = svgEl("rect", { x: x, y: y, width: bw, height: bh, rx: 4, fill: color });
+      var t = svgEl("title", {});
+      t.textContent = cfg.labels[i] + ": " + f(v);
+      r.appendChild(t);
+      svg.appendChild(r);
+      var tx = svgEl("text", { x: x + bw / 2, y: H - 10, "text-anchor": "middle", "font-size": 11, fill: mutedColor() });
+      tx.textContent = cfg.labels[i];
+      svg.appendChild(tx);
+    });
+  }
+
+  // line(el, {labels:[], values:[], color?, format?}) — single-series line.
+  function line(el, cfg) {
+    var W = 640, H = 280, padL = 46, padB = 30, padT = 12;
+    var svg = frame(el, W, H);
+    var max = maxOf(cfg.values);
+    var n = cfg.values.length;
+    var plotW = W - padL - 16, plotH = H - padT - padB;
+    var color = cfg.color || accent();
+    var f = coerceFormat(cfg.format);
+    for (var g = 0; g <= 4; g++) {
+      var gy = padT + plotH - (plotH * g) / 4;
+      svg.appendChild(svgEl("line", { x1: padL, y1: gy, x2: W - 16, y2: gy, stroke: "currentColor", "stroke-opacity": 0.08 }));
+      var lbl = svgEl("text", { x: padL - 8, y: gy + 4, "text-anchor": "end", "font-size": 10, fill: mutedColor() });
+      lbl.textContent = axisFmt((max * g) / 4);
+      svg.appendChild(lbl);
+    }
+    var pts = cfg.values.map(function (v, i) {
+      var x = padL + (n === 1 ? plotW / 2 : (plotW * i) / (n - 1));
+      var y = padT + plotH - (v / max) * plotH;
+      return [x, y];
+    });
+    var d = pts.map(function (p, i) { return (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+    svg.appendChild(svgEl("path", { d: d, fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round" }));
+    pts.forEach(function (p, i) {
+      var c = svgEl("circle", { cx: p[0], cy: p[1], r: 3.5, fill: color });
+      var t = svgEl("title", {});
+      t.textContent = cfg.labels[i] + ": " + f(cfg.values[i]);
+      c.appendChild(t);
+      svg.appendChild(c);
+      var tx = svgEl("text", { x: p[0], y: H - 10, "text-anchor": "middle", "font-size": 11, fill: mutedColor() });
+      tx.textContent = cfg.labels[i];
+      svg.appendChild(tx);
+    });
+  }
+
+  // donut(el, {labels:[], values:[], colors?}) — donut with center total.
+  function donut(el, cfg) {
+    var W = 320, H = 280, cx = W / 2, cy = H / 2, R = 92, r = 58;
+    var svg = frame(el, W, H);
+    var total = cfg.values.reduce(function (a, b) { return a + b; }, 0) || 1;
+    var palette = cfg.colors || [accent(), "#1baf7a", "#eda100", "#e34948", "#4a3aa7", "#e87ba4"];
+    var a0 = -Math.PI / 2;
+    cfg.values.forEach(function (v, i) {
+      var a1 = a0 + (v / total) * Math.PI * 2;
+      var large = a1 - a0 > Math.PI ? 1 : 0;
+      var p = ["M", cx + R * Math.cos(a0), cy + R * Math.sin(a0),
+        "A", R, R, 0, large, 1, cx + R * Math.cos(a1), cy + R * Math.sin(a1),
+        "L", cx + r * Math.cos(a1), cy + r * Math.sin(a1),
+        "A", r, r, 0, large, 0, cx + r * Math.cos(a0), cy + r * Math.sin(a0), "Z"].join(" ");
+      var path = svgEl("path", { d: p, fill: palette[i % palette.length] });
+      var t = svgEl("title", {});
+      t.textContent = cfg.labels[i] + ": " + fmt.num(v) + " (" + fmt.pct(v / total) + ")";
+      path.appendChild(t);
+      svg.appendChild(path);
+      a0 = a1;
+    });
+    var center = svgEl("text", { x: cx, y: cy + 5, "text-anchor": "middle", "font-size": 20, "font-weight": 650, fill: "currentColor" });
+    center.textContent = fmt.num(total);
+    svg.appendChild(center);
+  }
+
+  window.skipShell = { fmt: fmt };
+  window.skipChart = { bar: bar, line: line, donut: donut };
+})();
+
+</script>
+</body>
+</html>
